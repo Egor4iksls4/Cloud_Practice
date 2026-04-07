@@ -1,0 +1,52 @@
+name: Go CI
+
+on:
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  lint-and-build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.1'
+          cache: true
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.11.4
+      - name: Build application
+        run: go build -v ./...
+
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.1'
+          cache: true
+
+      - name: Run unit tests
+        run: go test -v -count=1 -cover -run '_Unit$' ./...
+
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.1'
+          cache: true
+
+      - name: Run integration tests
+        run: go test -v -count=1 -cover -run '_Integration$' ./...
