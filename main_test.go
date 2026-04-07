@@ -25,7 +25,10 @@ func TestHelloEndpoint_Integration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to make request: %v", err)
 	}
-	defer resp.Body.Close()
+
+	if closeErr := resp.Body.Close(); closeErr != nil {
+		t.Logf("warning: failed to close response body: %v", closeErr)
+	}
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("ожидался статус 200, получен %d", resp.StatusCode)
